@@ -1,0 +1,84 @@
+version: '3'
+
+services:
+  api:
+    volumes: 
+      - ./shiporders-api:/var/www/html
+    image: "${API_CONTAINER_NAME}"
+    container_name: "${API_CONTAINER_NAME}"
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+        TIMEZONE: "${TIMEZONE}"
+    depends_on:
+      - "db"
+    networks:
+      - shiporders_network
+
+  webserver:
+    volumes: 
+      - ./shiporders-api:/var/www/html
+    image: "${NGINX_CONTAINER_NAME}"
+    container_name: "${NGINX_CONTAINER_NAME}"
+    build: 
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - "${NGINX_API_HTTP_PORT}:80"
+      - "${NGINX_API_HTTPS_PORT}:443"
+    depends_on:
+      - "api"
+    networks:
+      - shiporders_network
+
+  composer:
+    volumes:
+      - ./shiporders-api:/app
+    image: "${COMPOSER_CONTAINER_NAME}"
+    container_name: "${COMPOSER_CONTAINER_NAME}"
+    build:
+      context: .
+      dockerfile: ./docker/composer/Dockerfile
+    environment:
+      COMPOSER_ALLOW_SUPERUSER: 1
+    depends_on:
+      - "api"
+    networks:
+      - shiporders_network
+
+  bash:
+    volumes:
+      - ./shiporders-api:/app
+    image: shiporders-app_bash
+    container_name: shiporders-app_bash
+    build:
+      context: .
+      dockerfile: ./docker/bash/Dockerfile
+    networks:
+      - shiporders_network
+    
+  db:
+    volumes: 
+      - ./database:/var/lib/mysql
+    build:
+      context: .
+      dockerfile: ./docker/mongo/Dockerfile
+    image: "${MARIADB_CONTAINER_NAME}"
+    container_name: "${MARIADB_CONTAINER_NAME}"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWD}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PASSWD}"
+      MYSQL_DATABASE: "${DB_NAME}"
+    ports:
+      - "${DB_PORT}:3306"
+    depends_on:
+      - "bash"
+    networks:
+      - shiporders_network
+
+networks:
+  shiporders_network:
+    driver: bridge
