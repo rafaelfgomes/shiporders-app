@@ -32,8 +32,25 @@ sed -i "s+MARIADB_CONTAINER_NAME=+MARIADB_CONTAINER_NAME=$mariadbContainerName+g
 sed -i "s+NGINX_CONTAINER_NAME=+NGINX_CONTAINER_NAME=$nginxContainerName+g" .env
 sed -i "s+PAGE_CONTAINER_NAME=+PAGE_CONTAINER_NAME=$pageContaineNrame+g" .env
 
+echo -e "\nEscolha o ambiente"
+read -p "1. local | 2. produção: " choice
+
+case $choice in
+    1)
+        appEnv="dev"
+        ;;
+    2)
+        appEnv="production"
+        ;;
+    *)
+        echo -e "Opção inválida"
+        exit 1
+        ;;
+esac
+
 read -p "Nginx HTTP Port: " nginxHttpPort
 read -p "Nginx HTTPS Port: " nginxHttpsPort
+read -p "Frontend Port: " frontendPort
 read -p "Database Port: " dbPort
 
 read -p "Database root password: " dbRootPass
@@ -44,6 +61,8 @@ read -p "Database name: " dbName
 appTz=$(curl https://ipapi.co/timezone)
 echo -e "\nTimezone: $appTz"
 
+sed -i "s+APP_ENV=+APP_ENV=$appEnv+g" .env
+sed -i "s+FRONTEND_PORT=+FRONTEND_PORT=$frontendPort+g" .env
 sed -i "s+NGINX_API_HTTP_PORT=+NGINX_API_HTTP_PORT=$nginxHttpPort+g" .env
 sed -i "s+NGINX_API_HTTPS_PORT=+NGINX_API_HTTPS_PORT=$nginxHttpsPort+g" .env
 sed -i "s+DB_PORT=+DB_PORT=$dbPort+g" .env

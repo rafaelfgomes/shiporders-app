@@ -57,6 +57,21 @@ services:
       dockerfile: ./docker/bash/Dockerfile
     networks:
       - shiporders_network
+
+  frontend:
+    volumes:
+      - ./frontend:/app
+    image: "${PAGE_CONTAINER_NAME}"
+    container_name: "${PAGE_CONTAINER_NAME}"
+    build:
+      context: .
+      dockerfile: ./docker/node/Dockerfile
+    environment:
+      NODE_ENV: "${APP_ENV}"
+    ports:
+      - "${FRONTEND_PORT}:8084"
+    networks:
+      - shiporders_network
     
   db:
     volumes: 
