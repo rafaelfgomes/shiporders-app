@@ -99,15 +99,18 @@ export default {
                 this.send.errorMessage = 'Arquivo(s) de envio inválido(s)'
             } else {
 
-                let endpoint = '/health-check'
+                let endpoint = '/upload'
                 let formData = new FormData();
                 formData.append('people', this.$refs.people)
                 formData.append('shiporders', this.$refs.shiporders)
 
-                await axios.get(this.baseUrl + endpoint)
+                await axios.post(
+                    this.baseUrl + endpoint, 
+                    formData
+                )
                 .then((response) => {
                     this.infoArea.hidden = false
-                    this.infoArea.text = response.data.health_check
+                    this.infoArea.text = response.data
                     this.inputPeople.fileName = ''
                     this.inputShiporder.fileName = ''
                 })

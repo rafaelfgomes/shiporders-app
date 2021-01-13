@@ -6,13 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Person class
+ * Contact class
  * 
- * @ORM\Entity(repositoryClass=PersonRepository::class)
- * @ORM\Table(name="persons")
+ * @ORM\Entity(repositoryClass=ContactRepository::class)
+ * @ORM\Table(name="contacts")
  * 
  */
-class Person
+class Contact
 {
     /**
      * @ORM\Id()
@@ -24,24 +24,23 @@ class Person
     /**
      * @ORM\Column(type="string")
      */
-    private $name;
+    private $number;
 
     /**
-     * Many Persons have Many Contacts
-     * @ORM\ManyToMany(targetEntity="Contact", inversedBy="persons")
-     * @ORM\JoinTable(name="person_contact")
+     * Many Contacts have Many Persons
+     * @ORM\ManyToMany(targetEntity="Person", mappedBy="contacts")
      */
-    private $contacts;
+    private $persons;
 
     public function __construct()
     {
-        $this->contacts = new ArrayCollection();
+        $this->persons = new ArrayCollection();
     }
 
     /**
      * Get id
      *
-     * @return integer|null
+     * @return integer
      */
     public function getId() : ?int
     {
@@ -51,11 +50,11 @@ class Person
     /**
      * Get the name of person
      *
-     * @return string|null
+     * @return string
      */
-    public function getName() : ?string
+    public function getNumber() : ?string
     {
-        return $this->name;
+        return $this->number;
     }
 
     /**
@@ -64,9 +63,9 @@ class Person
      * @param string $name
      * @return void
      */
-    public function setName(string $name) : void
+    public function setNumber(string $number) : void
     {
-        $this->name = $name;
+        $this->number = $number;
     }
 
     /**
@@ -79,14 +78,13 @@ class Person
         return get_object_vars($this);
     }
 
-    public function getContacts() : ArrayCollection
+    public function getPersons() : ArrayCollection
     {
-        return $this->contacts;
+        return $this->persons;
     }
 
-    public function setContacts(Contact $contact) : void
+    public function setPersons(Person $person) : void
     {
-        $contact->setPersons($this);
-        $this->contacts[] = $contact;
+        $this->persons[] = $person;
     }
 }
