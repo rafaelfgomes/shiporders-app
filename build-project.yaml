@@ -38,8 +38,8 @@ services:
   webserver:
     volumes: 
       - ./api:/var/www/html
-    image: "${NGINX_API_CONTAINER_NAME}"
-    container_name: "${NGINX_API_CONTAINER_NAME}"
+    image: "${NGINX_CONTAINER_NAME}"
+    container_name: "${NGINX_CONTAINER_NAME}"
     build: 
       context: .
       dockerfile: ./docker/nginx/Dockerfile
