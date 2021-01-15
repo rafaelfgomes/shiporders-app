@@ -1,10 +1,12 @@
 FROM node:alpine
 
+ARG API_PORT
+
+ENV API_PORT=${API_PORT}
+
 WORKDIR /app
 
-COPY . .
-
-RUN npm install
+COPY ./frontend .
 
 EXPOSE 8080
 

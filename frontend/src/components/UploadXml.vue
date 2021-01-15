@@ -67,7 +67,7 @@ export default {
     name: 'Upload',
     data () {
         return {
-            baseUrl: 'http://0.0.0.0:8888',
+            baseUrl: 'http://0.0.0.0:8686',
             inputPeople: {
                 fileName: 'Nenhum arquivo selecionado',
                 isChosen: false,

@@ -8,31 +8,30 @@ if [ ! -f .env ]; then
 else
 
   echo '.env file exists'
-  docker-compose down
   exit 1
 
 fi
 
-folderName=$(basename $(pwd))
-prefixContainerName=${folderName%-app}
+#folderName=$(basename $(pwd))
+prefixContainerName=shiporders
+
+frontendHttpPort=13000
+frontendHttpsPort=4554
+nginxHttpPort=8686
+nginxHttpsPort=4646
+dbPort=33060
 
 apiContainerName=$prefixContainerName"_api"
 mariadbContainerName=$prefixContainerName"_db"
 nginxContainerName=$prefixContainerName"_nginx"
 pageContaineNrame=$prefixContainerName"_frontend"
-appTz=$(curl https://ipapi.co/timezone)
+appTz=$(curl http://ip-api.com/line?fields=timezone)
 
 sed -i "s+API_CONTAINER_NAME=+API_CONTAINER_NAME=$apiContainerName+g" .env
 sed -i "s+MARIADB_CONTAINER_NAME=+MARIADB_CONTAINER_NAME=$mariadbContainerName+g" .env
 sed -i "s+NGINX_CONTAINER_NAME=+NGINX_CONTAINER_NAME=$nginxContainerName+g" .env
 sed -i "s+FRONTEND_CONTAINER_NAME=+FRONTEND_CONTAINER_NAME=$pageContaineNrame+g" .env
 sed -i "s+TIMEZONE=+TIMEZONE=$appTz+g" .env
-
-frontendHttpPort=$(comm -23 <(seq $(cat /proc/sys/net/ipv4/ip_local_port_range) | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
-frontendHttpsPort=$(comm -23 <(seq $(cat /proc/sys/net/ipv4/ip_local_port_range) | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
-nginxHttpPort=$(comm -23 <(seq $(cat /proc/sys/net/ipv4/ip_local_port_range) | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
-nginxHttpsPort=$(comm -23 <(seq $(cat /proc/sys/net/ipv4/ip_local_port_range) | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
-dbPort=$(comm -23 <(seq $(cat /proc/sys/net/ipv4/ip_local_port_range) | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
 
 sed -i "s+FRONTEND_HTTP_PORT=+FRONTEND_HTTP_PORT=$frontendHttpPort+g" .env
 sed -i "s+FRONTEND_HTTPS_PORT=+FRONTEND_HTTPS_PORT=$frontendHttpsPort+g" .env
