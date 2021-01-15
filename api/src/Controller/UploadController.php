@@ -32,8 +32,6 @@ class UploadController extends AbstractController
      */
     public function uploadFiles(Request $request) : JsonResponse
     {
-
-        dd($request);
         try {
             $result = $this->uploadService->uploadFiles($request);
         } catch (\Exception $ex) {
