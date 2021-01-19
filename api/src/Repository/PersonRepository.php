@@ -21,7 +21,7 @@ class PersonRepository implements RepositoryInterface
         $this->entityManager = $entityManager;
     }
 
-    public function store(array $data) : ?array
+    public function store(array $data) : Person
     {
         $person = new Person();
         $person->setName($data['name']);
@@ -36,7 +36,7 @@ class PersonRepository implements RepositoryInterface
         $this->entityManager->persist($person);
         $this->entityManager->flush();
         
-        return $person->getFields();
+        return $person;
     }
     
 }

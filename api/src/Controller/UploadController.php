@@ -28,7 +28,7 @@ class UploadController extends AbstractController
     }
 
     /**
-     * @Route("/upload", methods={"POST"}, name="upload_files")
+     * @Route("/api/upload", methods={"POST"}, name="upload_files")
      */
     public function uploadFiles(Request $request) : JsonResponse
     {

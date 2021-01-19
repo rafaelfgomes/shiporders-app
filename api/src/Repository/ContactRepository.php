@@ -21,7 +21,7 @@ class ContactRepository implements RepositoryInterface
         $this->entityManager = $entityManager;
     }
     
-    public function store(array $data) : ?array
+    public function store(array $data) : Contact
     {
         $contact = new Contact();
 
@@ -30,6 +30,6 @@ class ContactRepository implements RepositoryInterface
         $this->entityManager->persist($contact);
         $this->entityManager->flush();
 
-        return $contact->getFields();
+        return $contact;
     }
 }

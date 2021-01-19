@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Order;
 use App\Repository\OrderRepository;
 
 class OrderService
@@ -18,7 +19,7 @@ class OrderService
         $this->orderRepository = $orderRepository;
     }
 
-    public function store(array $data) : ?array
+    public function store(array $data) : Order
     {
         return $this->orderRepository->store($data);
     }

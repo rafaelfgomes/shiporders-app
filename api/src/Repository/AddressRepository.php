@@ -21,17 +21,17 @@ class AddressRepository implements RepositoryInterface
         $this->entityManager = $entityManager;
     }
 
-    public function store(array $data): ?array
+    public function store(array $data): Address
     {
         $address = new Address();
 
-        $address->setName($data['name']);
+        $address->setLocation($data['location']);
         $address->setCity($data['city']);
         $address->setCountry($data['country']);
 
         $this->entityManager->persist($address);
         $this->entityManager->flush();
 
-        return $address->getFields();  
+        return $address;  
     }
 }

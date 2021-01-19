@@ -20,7 +20,7 @@ class ItemRepository implements RepositoryInterface
         $this->entityManager = $entityManager;
     }
 
-    public function store(array $data): ?array
+    public function store(array $data) : Item
     {
         $item = new Item();
 
@@ -31,6 +31,6 @@ class ItemRepository implements RepositoryInterface
 
         $this->entityManager->persist($item);
 
-        return $item->getFields();
+        return $item;
     }
 }

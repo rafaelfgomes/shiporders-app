@@ -2,11 +2,11 @@
 
 namespace App\Service;
 
+use App\Entity\Person;
 use App\Repository\PersonRepository;
 
 class PersonService
 {
-
     /**
      * Person repository
      *
@@ -19,7 +19,7 @@ class PersonService
         $this->personRepository = $personRepository;
     }
 
-    public function store(array $data) : ?array
+    public function store(array $data) : Person
     {
         return $this->personRepository->store($data);
     }

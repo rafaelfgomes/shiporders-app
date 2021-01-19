@@ -15,7 +15,7 @@ class HealthController extends AbstractController
     use ApiResponser;
 
     /**
-     * @Route("/health-check", name="health_check")
+     * @Route("/api/health-check", name="health_check")
      */
     public function index() : JsonResponse
     {

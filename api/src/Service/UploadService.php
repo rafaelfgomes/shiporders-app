@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UploadService
 {
-
     use ApiResponser;
 
     /**
@@ -35,27 +34,36 @@ class UploadService
 
     public function uploadFiles(Request $request) : array
     {
-
         $result = [];
 
         $peopleXml = simplexml_load_file($request->files->get('people'));
         $shipordersXml = simplexml_load_file($request->files->get('shiporders'));
-        
+
         if (false === $peopleXml || false === $shipordersXml) {
             return $this->errorResponse("Erro ao carregar o XML", Response::HTTP_BAD_REQUEST);
         }
 
         $arrPeople = XmlHelper::formatPeopleXmlToArray($peopleXml);
+
+        if (!$arrPeople) {
+            return $this->errorResponse("Erro ao carregar o xml 'people.xml'", Response::HTTP_BAD_REQUEST);
+        }
+
         foreach ($arrPeople as $person) {
-            $result[] = [
-                'people' => $this->personService->store($person)
+            $result[]['people'][] = [
+                'person' => $this->personService->store($person)
             ];
         }
 
         $arrShiporders = XmlHelper::formatShipordersXmlToArray($shipordersXml);
+
+        if (!$arrShiporders) {
+            return $this->errorResponse("Erro ao carregar o xml 'shiporders.xml'", Response::HTTP_BAD_REQUEST);
+        }
+
         foreach ($arrShiporders as $order) {
-            $result[] = [
-                'shiporders' => $this->orderService->store($order)
+            $result[]['shiporders'][] = [
+                'order' => $this->orderService->store($order)
             ];
         }
 

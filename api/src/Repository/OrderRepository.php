@@ -23,11 +23,11 @@ class OrderRepository implements RepositoryInterface
         $this->entityManager = $entityManager;
     }
 
-    public function store(array $data): ?array
+    public function store(array $data): Order
     {
         $order = new Order();
 
-        $person = $this->entityManager->find(Person::class, 40);
+        $person = $this->entityManager->find(Person::class, $data['person_id']);
 
         $order->setPersonId($person->getId());
 
@@ -54,6 +54,6 @@ class OrderRepository implements RepositoryInterface
         $this->entityManager->persist($order);
         $this->entityManager->flush();
 
-        return $order->getFields();
+        return $order;
     }
 }
