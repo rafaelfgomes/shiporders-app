@@ -29,7 +29,7 @@ services:
       args:
         TIMEZONE: "${TIMEZONE}"
         DBUSER: "${DB_USER}"
-        DBPASS: "${DB_PASSWD}"
+        DBPASS: "${DB_ROOT_PASSWD}"
         DBNAME: "${DB_NAME}"
     depends_on:
       - "db"

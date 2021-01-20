@@ -34,10 +34,14 @@ class UploadController extends AbstractController
     {
         try {
             $result = $this->uploadService->uploadFiles($request);
+
+            if (!$result) {
+                $this->errorResponse('Erro ao processar o XML', Response::HTTP_BAD_REQUEST);
+            }
         } catch (\Exception $ex) {
             return $this->errorResponse($ex->getMessage(), Response::HTTP_BAD_REQUEST);
         }
 
-        return $this->successResponse([ 'data' => $result ]);
+        return $this->successResponse([ 'message' => 'XML processado com sucesso!!!' ]);
     }
 }

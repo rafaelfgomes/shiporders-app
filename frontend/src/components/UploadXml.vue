@@ -1,60 +1,127 @@
 <template>
     <div class="main">
-        <h1 class="has-text-centered">Upload Files!!!</h1>
-        <div class="container" >
-            <div class="input-group">
-                <div class="input-container">
-                    <div class="file has-name is-fullwidth upload-people">
-                        <label class="file-label is-flex is-justify-content-center is-align-items-center">
-                            <input class="file-input people" type="file" name="people" ref="people" accept="text/xml" @change="checkFile('people')" required>
-                            <span class="file-cta">
-                                <span class="file-icon">
-                                    <i class="fas fa-upload"></i>
+        <h1 class="has-text-centered is-uppercase"><strong>Upload Files!!!</strong></h1>
+        <div class="container">
+            <form name="form-upload" ref="form">
+                <div class="input-group">
+                    <div class="input-container">
+                        <div class="file has-name is-fullwidth upload-people">
+                            <label class="file-label is-flex is-justify-content-center is-align-items-center">
+                                <input class="file-input people" type="file" name="people" ref="people" accept="text/xml" @change="checkFile('people')" required>
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        people.xml file
+                                    </span>
                                 </span>
-                                <span class="file-label">
-                                    Arquivo people.xml
+                                <span class="file-name file-name-people">
+                                    {{ inputPeople.fileName }}
                                 </span>
-                            </span>
-                            <span class="file-name file-name-people">
-                                {{ inputPeople.fileName }}
-                            </span>
-                        </label>    
+                            </label>    
+                        </div>
+                        <span class="error-message" :class="inputPeople.isError ? '' : 'is-hidden'">{{ inputPeople.errorText }}</span>
                     </div>
-                    <span class="error-message" :class="inputPeople.isError ? '' : 'is-hidden'">{{ inputPeople.errorText }}</span>
-                </div>
-                
-                <div class="input-container">
-                    <div class="file has-name is-fullwidth upload-shiporders">
-                        <label class="file-label">
-                            <input class="file-input shiporders" type="file" name="shiporders" ref="shiporders" accept="text/xml" @change="checkFile('shiporders')" required>
-                            <span class="file-cta">
-                                <span class="file-icon">
-                                    <i class="fas fa-upload"></i>
+                    
+                    <div class="input-container">
+                        <div class="file has-name is-fullwidth upload-shiporders">
+                            <label class="file-label">
+                                <input class="file-input shiporders" type="file" name="shiporders" ref="shiporders" accept="text/xml" @change="checkFile('shiporders')" required>
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        shiporders.xml file
+                                    </span>
                                 </span>
-                                <span class="file-label">
-                                    Arquivo shiporders.xml
+                                <span class="file-name file-name-shiporders">
+                                    {{ inputShiporder.fileName }}
                                 </span>
-                            </span>
-                            <span class="file-name file-name-shiporders">
-                                {{ inputShiporder.fileName }}
-                            </span>
-                        </label>
+                            </label>
+                        </div>
+                        <span class="message" :class="inputShiporder.isError ? '' : 'is-hidden is-danger'">{{ inputShiporder.errorText }}</span>
                     </div>
-                    <span class="error-message" :class="inputShiporder.isError ? '' : 'is-hidden'">{{ inputShiporder.errorText }}</span>
                 </div>
-                
-                <!-- <input type="file" name="upload-people" id="people" ref="people" accept="text/xml"><br /> -->
-                <!-- <input type="file" name="upload-shiporders" id="shiporders" ref="shiporders" accept="text/xml"> -->
-            </div>
-            <div class="submit has-text-centered">
+            </form>
+            
+            <div class="has-text-centered">
                 <button class="button is-primary is-medium btn-upload" @click="upload()">
-                    Enviar
-                </button><br />
-                <span class="error-message" :class="send.hasErrors ? '' : 'is-hidden'">{{ send.errorMessage }}</span>
+                    Upload
+                </button>
+                <br><br>
+                <div v-if="send.upload.hasErrors" class="notification is-danger is-light" :class="this.send.upload.hidden ? 'is-hidden' : ''">
+                    <button class="delete" @click="closeNotification()"></button>
+                    {{ send.upload.message }}
+                </div>
+                <div v-else class="notification is-primary is-light" :class="this.send.upload.hidden ? 'is-hidden' : ''">
+                    <button class="delete" @click="closeNotification()"></button>
+                    {{ send.upload.message }}
+                </div>
             </div>
-            <div class="box" :class="infoArea.hidden ? 'is-hidden' : ''">
-                {{ infoArea.text }}
+
+            <br> 
+
+            <div class="xml-files has-text-centered">
+                <div class="button-group">
+                    <button class="button is-primary is-medium btn-upload" @click="getXml('people')">
+                        People XML file
+                    </button>
+
+                    <button class="button is-primary is-medium btn-upload" @click="getXml('shiporders')">
+                        Shiporders XML file
+                    </button>
+                </div>
+                <span class="error-message" :class="send.xml.hasErrors ? '' : 'is-hidden'">{{ send.errorMessage }}</span>
             </div>
+
+            <table class="table table-people is-hoverable is-fullwidth" :class="table.people.hidden ? 'is-hidden' : ''">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Contacts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="person in people" :key="person.id">
+                        <th>{{ person.id }}</th>
+                        <td>{{ person.name }}</td>
+                        <td>
+                            <span v-for="contact in person.contacts" :key="contact">
+                                {{ contact }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="table table-shiporders is-hoverable is-fullwidth" :class="table.shiporders.hidden ? 'is-hidden' : ''">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Person ID</th>
+                        <th>Address</th>
+                        <th>Items</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="order in shiporders" :key="order.id">
+                        <th>{{ order.id }}</th>
+                        <td>{{ order.person_id }}</td>
+                        <td>{{ order.address.location }}, {{ order.address.city }} - {{ order.address.country }}</td>
+                        <td>
+                            <span v-for="item in order.items" :key="item.title">
+                                Title: {{ item.title }}<br>
+                                Note: {{ item.note }}<br>
+                                Quantity: {{ item.quantity }}<br>
+                                Price: US$ {{ item.price }}<br><br>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
@@ -83,46 +150,103 @@ export default {
                 isDanger: false
             },
             send: {
-                hasErrors: false,
-                errorMessage: ''
+                upload: {
+                    hasErrors: false,
+                    message: '',
+                    hidden: true
+                },
+                xml: {
+                    hasErrors: false,
+                    errorMessage: ''
+                }
             },
-            infoArea: {
-                text: '',
-                hidden: true
-            }
+            table: {
+                people: {
+                    hidden: true
+                },
+                shiporders: {
+                    hidden: true
+                }
+            },
+            people: [],
+            shiporders: []
         }
     },
     methods: {
         async upload () {
 
-            if (this.send.hasErrors) {
-                this.send.errorMessage = 'Arquivo(s) de envio inválido(s)'
+            let peopleXmlLength = document.getElementsByClassName('people')[0].files.length
+            let shipordersXmlLength = document.getElementsByClassName('shiporders')[0].files.length
+
+            this.send.upload.hidden = false
+
+            if (peopleXmlLength === 0 || shipordersXmlLength === 0) {
+                this.send.upload.hasErrors = true
+                this.send.upload.message = 'É preciso escolher o arquivo de envio'
             } else {
 
-                let endpoint = '/upload'
-                let formData = new FormData();
-                formData.append('people', this.$refs.people)
-                formData.append('shiporders', this.$refs.shiporders)
+                const form = this.$refs.form
 
-                await axios.post(
-                    this.baseUrl + endpoint, 
-                    formData
-                )
-                .then((response) => {
-                    this.infoArea.hidden = false
-                    this.infoArea.text = response.data
-                    this.inputPeople.fileName = ''
-                    this.inputShiporder.fileName = ''
-                })
-                .catch(() => (
-                    this.info = "Houve um problema"
-                ))
+                if (this.send.hasErrors) {
+                    this.send.errorMessage = 'Arquivo(s) de envio inválido(s)'
+                } else {
+                    let endpoint = '/api/upload'
+                    let formData = new FormData(form)
 
+                    await axios.post(
+                        this.baseUrl + endpoint, 
+                        formData,
+                        {
+                            headers: { 'Content-Type': 'multipart/form-data' }
+                        }
+                    )
+                    .then(response => {
+                        this.send.upload.hasErrors = false
+                        this.inputPeople.fileName = 'Nenhum arquivo selecionado'
+                        this.inputShiporder.fileName = 'Nenhum arquivo selecionado'
+                        this.send.upload.message = response.data.message
+                    })
+                    .catch(response => {
+                        this.send.upload.hasErrors = true
+                        this.send.upload.message = response.data.message  
+                    })
+
+                }
+                
             }
 
         },
+        getXml (xml) {
+
+            let endpoint = '/api/xml/get-content?file-name=' + xml
+
+            console.log(this.baseUrl + endpoint);
+
+            axios.get(
+                this.baseUrl + endpoint
+            )
+            .then(response => {
+                
+                if (xml === 'people') {
+                    this.table.people.hidden = false
+                    this.table.shiporders.hidden = true
+                    this.people = response.data
+                } else {
+                    this.table.shiporders.hidden = false
+                    this.table.people.hidden = true
+                    this.shiporders = response.data
+                }
+                
+                this.inputPeople.fileName = 'Nenhum arquivo selecionado'
+                this.inputShiporder.fileName = 'Nenhum arquivo selecionado'
+            })
+            .catch(error => {
+                this.info = error
+            })
+        },
         checkFile (inputClass) {
             const input = document.getElementsByClassName(`${inputClass}`)
+            this.send.upload.hidden = true
             if (input[0].files.length > 0) {
                 if (inputClass.includes('people')) {
                     this.inputPeople.isChosen = true
@@ -130,36 +254,44 @@ export default {
                         this.inputPeople.isError = true
                         this.inputPeople.fileName = 'Arquivo inválido'
                         this.inputPeople.errorText = `É preciso selecionar o arquivo 'people.xml'`
-                        this.send.hasErrors = true
+                        this.send.upload.hasErrors = true
                     } else {
                         this.inputPeople.isError = false
                         this.inputPeople.errorText = ''
-                        this.send.hasErrors = false
-                        this.send.errorMessage = ''
+                        this.send.upload.hasErrors = false
+                        this.send.upload.message = ''
                         this.inputPeople.fileName = input[0].files[0].name
-                    }
+                    } 
                 } else {
                     this.inputShiporder.isChosen = true
                     if (input[0].files[0].name.includes('people')) {
                         this.inputShiporder.isError = true
                         this.inputShiporder.fileName = 'Arquivo inválido'
                         this.inputShiporder.errorText = `É preciso selecionar o arquivo 'shiporders.xml'`
-                        this.send.hasErrors = true
+                        this.send.upload.hasErrors = true
                     } else {
                         this.inputShiporder.isError = false
                         this.inputShiporder.errorText = ''
-                        this.send.hasErrors = false
-                        this.send.errorMessage = ''
+                        this.send.upload.hasErrors = false
+                        this.send.upload.message = ''
                         this.inputShiporder.fileName = input[0].files[0].name
                     }
                 }
             }
+        },
+        closeNotification () {
+            this.send.upload.hidden = true
+            this.send.upload.message = ''
         }
     }
 }
 </script>
 
 <style>
+
+h1 {
+    font-size: 30px;
+}
 
 .main {
     margin: 0 auto;
@@ -169,30 +301,38 @@ export default {
 
 .container {
     margin: 0 auto;
-    width: 70%;
+    width: 65%;
 }
 
 .input-group {
     padding: 30px 0;
 }
 
+.upload-success,
 .fa-check-circle {
     color: green;
 }
 
+.button-group {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.xml-files {
+    display: flex;
+    flex-direction: column;
+}
+
 .fa-times-circle,
-.error-message {
+.error-message,
+.upload-error {
     color: red;
 }
 
 .upload-people,
 .upload-shiporders {
     padding: 15px 0;
-}
-
-.box {
-    margin-top: 50px;
-    height: 400px;
 }
 
 </style>
