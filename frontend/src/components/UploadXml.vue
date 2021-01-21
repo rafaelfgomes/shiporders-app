@@ -169,12 +169,12 @@ export default {
                 }
             },
             people: [],
-            shiporders: []
+            shiporders: [],
+            apiToken: ''
         }
     },
     methods: {
         async upload () {
-
             let peopleXmlLength = document.getElementsByClassName('people')[0].files.length
             let shipordersXmlLength = document.getElementsByClassName('shiporders')[0].files.length
 
@@ -190,14 +190,17 @@ export default {
                 if (this.send.hasErrors) {
                     this.send.errorMessage = 'Arquivo(s) de envio inválido(s)'
                 } else {
-                    let endpoint = '/api/upload'
+                    let uploadEndpoint = this.baseUrl + '/api/upload'
+                    let tokenEndpoint = this.baseUrl + '/api/token/get'
+
                     let formData = new FormData(form)
+                    this.getToken(tokenEndpoint)
 
                     await axios.post(
-                        this.baseUrl + endpoint, 
+                        uploadEndpoint, 
                         formData,
                         {
-                            headers: { 'Content-Type': 'multipart/form-data' }
+                            headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `${this.apiToken}` }
                         }
                     )
                     .then(response => {
@@ -216,33 +219,44 @@ export default {
             }
 
         },
-        getXml (xml) {
+        async getXml (xml) {
 
             let endpoint = '/api/xml/get-content?file-name=' + xml
+            let tokenEndpoint = this.baseUrl + '/api/token/get'
 
-            console.log(this.baseUrl + endpoint);
-
-            axios.get(
-                this.baseUrl + endpoint
-            )
+            await axios.get(tokenEndpoint)
             .then(response => {
                 
-                if (xml === 'people') {
-                    this.table.people.hidden = false
-                    this.table.shiporders.hidden = true
-                    this.people = response.data
-                } else {
-                    this.table.shiporders.hidden = false
-                    this.table.people.hidden = true
-                    this.shiporders = response.data
-                }
-                
-                this.inputPeople.fileName = 'Nenhum arquivo selecionado'
-                this.inputShiporder.fileName = 'Nenhum arquivo selecionado'
+                axios.get(
+                    this.baseUrl + endpoint,
+                    {
+                        headers: { 'Authorization': `${response.data.token}` }
+                    }
+                )
+                .then(response => {
+                    
+                    if (xml === 'people') {
+                        this.table.people.hidden = false
+                        this.table.shiporders.hidden = true
+                        this.people = response.data
+                    } else {
+                        this.table.shiporders.hidden = false
+                        this.table.people.hidden = true
+                        this.shiporders = response.data
+                    }
+                    
+                    this.inputPeople.fileName = 'Nenhum arquivo selecionado'
+                    this.inputShiporder.fileName = 'Nenhum arquivo selecionado'
+                })
+                .catch(error => {
+                    this.info = error
+                })
+
             })
-            .catch(error => {
-                this.info = error
-            })
+            .catch(response => {
+                this.send.upload.hasErrors = true
+                this.send.upload.message = response.data.message
+            })            
         },
         checkFile (inputClass) {
             const input = document.getElementsByClassName(`${inputClass}`)

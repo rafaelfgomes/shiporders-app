@@ -28,9 +28,9 @@ services:
       dockerfile: ./docker/php/Dockerfile
       args:
         TIMEZONE: "${TIMEZONE}"
-        DBUSER: "${DB_USER}"
         DBPASS: "${DB_ROOT_PASSWD}"
         DBNAME: "${DB_NAME}"
+        APITOKEN: "${API_TOKEN}"
     depends_on:
       - "db"
     networks:

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Helpers\Token;
 use App\Service\UploadService;
 use App\Traits\ApiResponser;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,15 +17,23 @@ class UploadController extends AbstractController
     use ApiResponser;
 
     /**
+     * Token for api auth
+     *
+     * @var Token
+     */
+    private $token;
+
+    /**
      * Upload service
      *
      * @var UploadService
      */
     private $uploadService;
 
-    public function __construct(UploadService $uploadService)
+    public function __construct(UploadService $uploadService, Token $token)
     {
         $this->uploadService = $uploadService;
+        $this->token = $token;
     }
 
     /**
@@ -32,6 +41,18 @@ class UploadController extends AbstractController
      */
     public function uploadFiles(Request $request) : JsonResponse
     {
+        if (!$request->headers->has('Authorization')) {
+            $message = 'Unauthorized';
+            return $this->errorResponse($message, Response::HTTP_UNAUTHORIZED);
+        }
+
+        $token = $request->headers->get('Authorization');
+
+        if (!($this->token->decrypt($token) === $_ENV['APP_SECRET']))  {
+            $message = 'Token mismatch';
+            return $this->errorResponse($message, Response::HTTP_UNAUTHORIZED);
+        }
+
         try {
             $result = $this->uploadService->uploadFiles($request);
 

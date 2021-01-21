@@ -27,6 +27,8 @@ nginxContainerName=$prefixContainerName"_nginx"
 pageContaineNrame=$prefixContainerName"_frontend"
 appTz=$(curl http://ip-api.com/line?fields=timezone)
 
+apiToken=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1)
+
 sed -i "s+API_CONTAINER_NAME=+API_CONTAINER_NAME=$apiContainerName+g" .env
 sed -i "s+MARIADB_CONTAINER_NAME=+MARIADB_CONTAINER_NAME=$mariadbContainerName+g" .env
 sed -i "s+NGINX_CONTAINER_NAME=+NGINX_CONTAINER_NAME=$nginxContainerName+g" .env
@@ -38,3 +40,5 @@ sed -i "s+FRONTEND_HTTPS_PORT=+FRONTEND_HTTPS_PORT=$frontendHttpsPort+g" .env
 sed -i "s+API_HTTP_PORT=+API_HTTP_PORT=$nginxHttpPort+g" .env
 sed -i "s+API_HTTPS_PORT=+API_HTTPS_PORT=$nginxHttpsPort+g" .env
 sed -i "s+DB_PORT=+DB_PORT=$dbPort+g" .env
+
+sed -i "s+API_TOKEN=+API_TOKEN=$apiToken+g" .env
