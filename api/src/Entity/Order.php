@@ -97,7 +97,7 @@ class Order
      * @param integer $addressId
      * @return void
      */
-    public function serAddressId(int $addressId) : void
+    public function setAddressId(int $addressId) : void
     {
         $this->addressId = $addressId;
     }

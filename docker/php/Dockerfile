@@ -25,4 +25,4 @@ COPY ./api .
 
 EXPOSE 9000
 
-CMD [ "sh", "-c", "cp .env.sample .env && composer install && chmod -R 777 vendor && chmod 777 .env && && php-fpm" ]
+CMD [ "sh", "-c", "cp .env.sample .env && composer install && chmod -R 777 vendor && chmod 777 .env && php-fpm" ]

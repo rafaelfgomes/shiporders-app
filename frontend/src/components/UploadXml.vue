@@ -212,13 +212,13 @@ export default {
                         })
                         .catch(response => {
                             this.send.upload.hasErrors = true
-                            this.send.upload.message = response.data.message  
+                            this.send.upload.message = response.data.error.message  
                         })
 
                     })
                     .catch(response => {
                         this.send.upload.hasErrors = true
-                        this.send.upload.message = response.data.message
+                        this.send.upload.message = response.data.error.message
                     })
 
                 }
@@ -255,9 +255,9 @@ export default {
                     this.inputPeople.fileName = 'Nenhum arquivo selecionado'
                     this.inputShiporder.fileName = 'Nenhum arquivo selecionado'
                 })
-                .catch(error => {
+                .catch(response => {
                     this.send.upload.hasErrors = true
-                    this.send.upload.message = error
+                    this.send.upload.message = response.data.error.message
                 })
 
             })
