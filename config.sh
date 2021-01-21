@@ -29,6 +29,7 @@ if [ -f .env ]; then
     esac
 
     sed -i "s+APP_ENV=+APP_ENV=$appEnv+g" .env
+    sed -i "s+DB_USER=+DB_USER=root+g" .env
     sed -i "s+DB_ROOT_PASSWD=+DB_ROOT_PASSWD=$dbRootPass+g" .env
     sed -i "s+DB_NAME=+DB_NAME=$dbName+g" .env
 

@@ -6,12 +6,8 @@ ENV API_PORT=${API_PORT}
 
 WORKDIR /app
 
-COPY ./frontend/package*.json ./
-
-RUN npm install 
-
 COPY ./frontend .
 
 EXPOSE 8080
 
-CMD [ "npm", "run", "serve" ]
+CMD [ "sh", "-c", "npm install && chmod -R 777 node_modules && npm run serve" ]

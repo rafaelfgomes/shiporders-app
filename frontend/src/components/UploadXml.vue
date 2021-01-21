@@ -169,8 +169,7 @@ export default {
                 }
             },
             people: [],
-            shiporders: [],
-            apiToken: ''
+            shiporders: []
         }
     },
     methods: {
@@ -190,28 +189,36 @@ export default {
                 if (this.send.hasErrors) {
                     this.send.errorMessage = 'Arquivo(s) de envio inválido(s)'
                 } else {
-                    let uploadEndpoint = this.baseUrl + '/api/upload'
                     let tokenEndpoint = this.baseUrl + '/api/token/get'
-
-                    let formData = new FormData(form)
-                    this.getToken(tokenEndpoint)
-
-                    await axios.post(
-                        uploadEndpoint, 
-                        formData,
-                        {
-                            headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `${this.apiToken}` }
-                        }
-                    )
+                    
+                    await axios.get(tokenEndpoint)
                     .then(response => {
-                        this.send.upload.hasErrors = false
-                        this.inputPeople.fileName = 'Nenhum arquivo selecionado'
-                        this.inputShiporder.fileName = 'Nenhum arquivo selecionado'
-                        this.send.upload.message = response.data.message
+
+                        let uploadEndpoint = this.baseUrl + '/api/upload'
+                        let formData = new FormData(form)
+                        
+                        axios.post(
+                            uploadEndpoint, 
+                            formData,
+                            {
+                                headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `${response.data.token}` }
+                            }
+                        )
+                        .then(response => {
+                            this.send.upload.hasErrors = false
+                            this.inputPeople.fileName = 'Nenhum arquivo selecionado'
+                            this.inputShiporder.fileName = 'Nenhum arquivo selecionado'
+                            this.send.upload.message = response.data.message
+                        })
+                        .catch(response => {
+                            this.send.upload.hasErrors = true
+                            this.send.upload.message = response.data.message  
+                        })
+
                     })
                     .catch(response => {
                         this.send.upload.hasErrors = true
-                        this.send.upload.message = response.data.message  
+                        this.send.upload.message = response.data.message
                     })
 
                 }
@@ -249,7 +256,8 @@ export default {
                     this.inputShiporder.fileName = 'Nenhum arquivo selecionado'
                 })
                 .catch(error => {
-                    this.info = error
+                    this.send.upload.hasErrors = true
+                    this.send.upload.message = error
                 })
 
             })

@@ -46,9 +46,10 @@ class UploadController extends AbstractController
             return $this->errorResponse($message, Response::HTTP_UNAUTHORIZED);
         }
 
-        $token = $request->headers->get('Authorization');
+        $tokenHeader = $request->headers->get('Authorization');
+        $decryptedHash = $this->token->decrypt($tokenHeader);
 
-        if (!($this->token->decrypt($token) === $_ENV['APP_SECRET']))  {
+        if (!($decryptedHash === $this->getParameter('api.token')))  {
             $message = 'Token mismatch';
             return $this->errorResponse($message, Response::HTTP_UNAUTHORIZED);
         }

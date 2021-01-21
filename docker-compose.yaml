@@ -29,6 +29,7 @@ services:
       args:
         TIMEZONE: "${TIMEZONE}"
         DBPASS: "${DB_ROOT_PASSWD}"
+        DBUSER: "${DB_USER}"
         DBNAME: "${DB_NAME}"
         APITOKEN: "${API_TOKEN}"
     depends_on:
