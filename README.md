@@ -20,8 +20,8 @@ git clone https://github.com/rafaelfgomes/shiporders-app.git
 
 To run and test this project you need this dependencies:
 
-[Docker](https://www.docker.com/get-started)
-[Docker Compose](https://docs.docker.com/compose/install/)
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Pre configuration
 
@@ -41,7 +41,7 @@ docker-compose up -d
 
 ## Project content
 
-After run docker compose will be created 4 containers: api, frontend, database, webserver
+After run docker compose will be created 4 containers: api, frontend, database, webserver.
 The api container is built based on docker php-fpm alpine image.
 The batabase container is built based on docker mariadb image.
 The webserver container is built based on docker nginx alpine image.
